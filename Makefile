@@ -1,15 +1,16 @@
-# see: http://www.ocaml.info/home/ocaml_sources.html#toc16
+.PHONY: all doc
+OCAMLBUILD = ocamlbuild -lib unix -use-ocamlfind 
 
-# put here the names of your source files (in the right order)
-SOURCES = protocol.ml sdnlanguage.ml
+all: 
+	$(OCAMLBUILD) controller.byte
+	$(OCAMLBUILD) client.byte
 
-# the name of the resulting executable
-RESULT  = testserv
+doc:
+	$(OCAMLBUILD) doc.docdir/index.html
 
-# generate type information (.annot files)
-ANNOTATE = yes
+test: _build/Test.d.byte
+	$<
 
-# make target (see manual) : byte-code, debug-code, native-code, ...
-all: debug-code
-
-include OCamlMakefile
+clean:
+	rm -rf _build
+	rm -rf extracted

@@ -1,10 +1,13 @@
 (** The NetCore policy language *)
 (** Based on NetCore.mli from Desmonies; simplified *)
 
-open MessagesDef
+(* open MessagesDef
 open Packet
-open Platform
+open Platform *)
 
+type packet = int64 (*gross; for now, to get it working *)
+type switchId = int64
+type portId = int32
 type get_packet_handler = switchId -> portId -> packet -> unit
 
 (** Predicates match packets based on their header values. *)
@@ -16,6 +19,7 @@ type predicate =
   | NoPackets
   | Switch of switchId
   | InPort of portId
+  | DlType of int (* 8 bits *)
   | DlSrc of Int64.t  (** Match Ethernet source address (48-bits) *)
   | DlDst of Int64.t (** Match Ethernet destination address (48-bits) *)
   | SrcIP of Int32.t
@@ -33,9 +37,10 @@ type policy =
   | Par of policy * policy (** parallel composition *)
   | Restrict of policy * predicate
 
-val policy_to_string : policy -> string
+val string_of_policy : policy -> string
 
+(*
 module Make : functor (Platform : PLATFORM) -> sig
   val start_controller : policy Lwt_stream.t -> unit Lwt.t
 end
-
+*)
