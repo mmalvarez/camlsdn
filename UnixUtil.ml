@@ -61,4 +61,5 @@ struct
       Returns this machine's address *)
   let get_my_addr () =
     (gethostbyname(gethostname())).Unix.h_addr_list.(0);;
+
 end;;

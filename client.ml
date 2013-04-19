@@ -41,5 +41,5 @@ let client () =
 	let sock = socket PF_INET SOCK_STREAM 0 in
 	let (in_chan, out_chan) = open_connection server_addr in
 	c_handler in_chan out_chan;;
-
+	
 client ();;

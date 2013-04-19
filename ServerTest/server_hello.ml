@@ -1,7 +1,7 @@
 (* Very simple test server*)
 (* For echoing input from client*)
 open Sys;;
-open Unix;;
+open g;;
 
 
 if Array.length Sys.argv < 2 then
@@ -27,7 +27,7 @@ let install_tcp_server_socket addr =
   let s = socket PF_INET SOCK_STREAM 0 in
   try
     bind s addr;
-    listen s 10;
+    listen s 10; (* 10 = max # of pending reqs *)
     s
   with z -> close s; raise z;;
 
