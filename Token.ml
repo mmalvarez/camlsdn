@@ -108,7 +108,7 @@ module Token = struct
         print_newline ();;
 
     (** Convert command structure to corresponding iptables code *)
-    let iptables_of_command com =
+    let iptables_of_command (CmdOnSwitch (com, sw)) =
         match com with
         | CreateChain chName -> "iptables -N " ^ chName
         | ExtendChain (c, a, p) ->

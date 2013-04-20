@@ -5,6 +5,7 @@ open Unix;;
 open UnixUtil;;
 open Marshal;;
 open NetCore;;
+open Hashtbl;;
 
 type client_id = int;; (* Or something *)
 
@@ -14,17 +15,23 @@ type simple_client_msg =
 
 let portnum = 8988;;
 
-let simple_policy = Action ToAll;;
+let sample_policy = NetCore.Policy
+    (NetCore.Input, NetCore.Drop, NetCore.TcpSrcPort 80, 10);;
 
 (** Handler function used by server.
 		Needs a mapping of clients to policies, produced by parse_policy *)
 let s_handler pol_map in_chan out_chan =
 	prerr_endline "GOT TO s_handler";
+    (* Wait for client to self-identify *)
+    let cli_id = (Marshal.from_channel in_chan : int) in
+    print_endline ("Client ID: " ^ string_of_int cli_id);
+
 	(* Write initial policy *)
 	Marshal.to_channel out_chan pol_map [];
 	flush out_chan;
 	prerr_endline "waiting for response...";
 	(* Wait for client to acknowledge policy *)
+	(* TODO - don't block while waiting *)
 	let cliResponse = (Marshal.from_channel in_chan : simple_client_msg) in
 	match cliResponse with
 	| ClientAck -> print_endline "success!"
@@ -37,7 +44,8 @@ let init pol =
 	let server_handler = UnixUtil.treat_with_chan_handler (s_handler pol) in
 	UnixUtil.tcp_server server_handler my_addr;;
 
+(* read config file given by first command-line arg *)
 let main () =
-	init simple_policy;;
+	init sample_policy;;
 
 main ();;

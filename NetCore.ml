@@ -14,7 +14,7 @@ open MiscUtil;;
 
 module NetCore = struct
     type packet = int64;; (*gross; for now, to get it working *)
-    type switchId = int64;;
+    type switchId = int;;
     type portId = int32;;
     type get_packet_handler = switchId -> portId -> packet -> unit;;
 
@@ -206,7 +206,7 @@ module NetCore = struct
         print_string ",";
         format_predicate next p;
         print_string ",";
-        print_string ("SwitchId (" ^ Int64.to_string s ^ ")"); 
+        print_string ("SwitchId (" ^ string_of_int s ^ ")"); 
         print_space ();
         print_string ")";
         close_box ();
@@ -316,8 +316,10 @@ module NetCore = struct
 
     (* Called by client to convert policy to tokens *)
     let tokens_of_policy pol =
+        match pol with
         (* having the chain number be mutable makes this not horrible *)
-        _tokens_of_policy pol (ref 0);;
+        | Policy (_, _, _, sw) ->
+            (sw, _tokens_of_policy pol (ref 0));;
 
     (*module Make : functor (Platform : PLATFORM) -> sig
         val start_controller : (policy * policy * policy) Lwt_stream.t -> unit Lwt.t
