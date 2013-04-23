@@ -14,12 +14,11 @@ open MiscUtil;;
 
 module NetCore = struct
     type packet = int64;; (*gross; for now, to get it working *)
-    type switchId = int;;
     type portId = int32;;
-    type get_packet_handler = switchId -> portId -> packet -> unit;;
+    type get_packet_handler = Token.switch_id -> portId -> packet -> unit;;
 
     (* Constant - prefix to chain names *)
-    let chainPrefix = "camlsdn_ ";;
+    let chainPrefix = "camlsdn_";;
 
     (* Netcore, without "stacking" functionality *)
     type predicate =
@@ -28,7 +27,7 @@ module NetCore = struct
         | Not of predicate
         | All
         | NoPackets
-        (*| Switch of switchId*) (*perhaps someday*)
+        (*| Switch of Token.switch_id*) (*perhaps someday*)
         (* InPort?? *)
         | DlType of int (** 8 bits *)
         | DlSrc of Int64.t (** Match 48 bit Ethernet src addr *)
@@ -191,7 +190,7 @@ module NetCore = struct
         print_newline ();;
 
     (* Simplified policies, HTables-style *)
-    type policy = Policy of chain * action * predicate * switchId;;
+    type policy = Policy of chain * action * predicate * Token.switch_id;;
 
     let format_policy lvl (Policy (c, a, p, s)) =
         let next = lvl + 1 in
@@ -206,7 +205,7 @@ module NetCore = struct
         print_string ",";
         format_predicate next p;
         print_string ",";
-        print_string ("SwitchId (" ^ string_of_int s ^ ")"); 
+        print_string ("Token.switch_id (" ^ string_of_int s ^ ")"); 
         print_space ();
         print_string ")";
         close_box ();

@@ -9,6 +9,9 @@ open MiscUtil;;
 
 module Token = struct
 
+    (** Identify switches*)
+    type switch_id = int;;
+
     (** iptables chains *)
     type chain = Input | Output | User of string;; (* User = name of user chain *)
 
@@ -106,6 +109,8 @@ module Token = struct
             print_string ("CreateChain (" ^ name ^ ")");
         close_box ();
         print_newline ();;
+
+    type cmd_on_switch = CmdOnSwitch of command * NetCore.switchId;;
 
     (** Convert command structure to corresponding iptables code *)
     let iptables_of_command (CmdOnSwitch (com, sw)) =
