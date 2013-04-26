@@ -14,3 +14,5 @@ test: _build/Test.d.byte
 clean:
 	rm -rf _build
 	rm -rf extracted
+	rm -f client.byte
+	rm -f controller.byte 
